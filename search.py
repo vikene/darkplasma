@@ -83,8 +83,20 @@ def main_menu_bar(display_obj):
     data_base.add_command(label="Connect to Indexer",command=menu_routine)
     data_base.add_command(label="Add Url's to Indexer",command=menu_routine)
     data_base.add_command(label="Connect to Remote Indexer",command=menu_routine)
-    
     menu_bar.add_cascade(label="Database",menu=data_base)
+    window_bar = Menu(menu_bar,tearoff=0)
+    window_bar.add_command(label="Zoom in       +",command=menu_routine)
+    window_bar.add_command(label="Zoom out      -",command=menu_routine)
+    window_bar.add_separator()
+    window_bar.add_command(label="Tk",command=menu_routine)
+    menu_bar.add_cascade(label="Windows",menu=window_bar)
+    help_bar = Menu(menu_bar,tearoff=0)
+    help_bar.add_command(label="About Spider",command=menu_routine)
+    help_bar.add_separator()
+    help_bar.add_command(label="Docs",command=menu_routine)
+    help_bar.add_command(label="Help (online)",command=menu_routine)
+    menu_bar.add_cascade(label="Help",menu=help_bar)
+    
     display_obj.config(menu=menu_bar)
     
 
