@@ -4,21 +4,63 @@ import urllib2
 import Tkinter
 import tkMessageBox
 import menu
+import thread
+from multiprocessing.pool import ThreadPool
+
+tag_made = 0
 
 class MyHTMLParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
-        print "Encountered a start tag:", tag
+       if( tag == 'script'):
+           tag_made = 1
+       if( tag == 'style'):
+           tag_made = 1
+       
     def handle_endtag(self, tag):
-        print "Encountered an end tag :", tag
+        if(tag== 'script'):
+            tag_made=0    
+        if( tag == 'style'):
+           tag_made = 0
     
     def handle_data(self, data):
-       filee.write(data+'\n')
+        xx = data
+        if(tag_made == 0):
+            if(xx.find("CDATA") == -1):
+                if(xx.find('/*') == -1):
+                    if(xx.find('!') == -1):
+                        if(xx.find('\n') == -1):
+                            view_me.insert(INSERT,data+'\n')
 
 filee=  open('Data_parsed.txt','w')
 parser = MyHTMLParser()
+custom = "http://jeovasanctusunus.tumblr.com/"
+
+class dialogue:
+    def __init__(self, parent):
+
+        ask_dig = self.ask_dig = Toplevel(parent)
+        self.ask_dig.title("Custom URL")
+        url_As = Label(ask_dig,text="Enter a URL to Scan")
+        url_As.pack(padx=15)
+        self.url = Entry(ask_dig,width=80)
+        self.url.pack()
+        self.url.focus_set()
+        b = Button(ask_dig,text="Ok",command=self.ok)
+        b.pack()
+
+    def ok(self):
+        custom = self.url.get()
+        print self.url.get()
+        self.ask_dig.destroy()
+
 
 def startmee():
-    result = urllib2.urlopen('http://www.bing.com/search?q=java')
+    d = dialogue(face_1)
+    face_1.wait_window(d.ask_dig)
+    start_pool =  ThreadPool(processes=1)
+    as_result = start_pool.apply_async(urllib2.urlopen,(custom,))
+    result = as_result.get()
+
     java = result.read()
   
     parser.feed(java)
@@ -32,7 +74,7 @@ def menu_routine():
 def main_menu_bar(display_obj):
     menu_bar = Menu(display_obj)
     file_bar = Menu(menu_bar, tearoff=0)
-    file_bar.add_command(label="Start Spidy!",command=menu_routine)
+    file_bar.add_command(label="Start Spidy!",command=startmee)
     file_bar.add_command(label="Open",command=menu_routine)
     file_bar.add_command(label="Open Recent",command=menu_routine)
     file_bar.add_separator()
@@ -102,8 +144,12 @@ def main_menu_bar(display_obj):
 
 face_1 = Tkinter.Tk()
 main_menu_bar(face_1)
-
-
+view_me = Text(face_1)
+view_me.pack()
+face_1.title("Dark Plasma")
 face_1.mainloop()
+
+
+
 
 
